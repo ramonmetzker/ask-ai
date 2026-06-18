@@ -28,17 +28,12 @@ echo "Starting model downloads for Ask AI..."
 
 # 1. Qwen 2.5 1.5B Instruct (Q4_K_M)
 download_file \
-    "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf" \
+    "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q4_k_m.gguf" \
     "$MODELS_DIR/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf"
 
 # 2. Llama 3.2 3B Instruct (Q4_K_M)
 download_file \
     "https://huggingface.co/bartowski/Llama-3.2-3B-Instruct-GGUF/resolve/main/Llama-3.2-3B-Instruct-Q4_K_M.gguf" \
     "$MODELS_DIR/Llama-3.2-3B-Instruct-Q4_K_M.gguf"
-
-# 3. Llama 3.2 3B Instruct (Q2_K)
-download_file \
-    "https://huggingface.co/bartowski/Llama-3.2-3B-Instruct-GGUF/resolve/main/Llama-3.2-3B-Instruct-Q2_K.gguf" \
-    "$MODELS_DIR/Llama-3.2-3B-Instruct-Q2_K.gguf"
 
 echo "All models downloaded successfully!"
