@@ -17,6 +17,18 @@ echo "Installing ask executable..."
 cp ask.py "$BIN_DIR/ask"
 chmod +x "$BIN_DIR/ask"
 
+# Create wrapper for llama-completion if found in the global ~/ai directory
+GLOBAL_LLAMA_DIR="$HOME/ai/llama.cpp"
+if [ -f "$GLOBAL_LLAMA_DIR/build/bin/llama-completion" ]; then
+    echo "Creating wrapper for llama-completion in $BIN_DIR..."
+    cat << EOF > "$BIN_DIR/llama-completion"
+#!/bin/bash
+export LD_LIBRARY_PATH="$GLOBAL_LLAMA_DIR/build/bin:\$LD_LIBRARY_PATH"
+exec "$GLOBAL_LLAMA_DIR/build/bin/llama-completion" "\$@"
+EOF
+    chmod +x "$BIN_DIR/llama-completion"
+fi
+
 echo "Creating autostart configuration..."
 cat << EOF > "$AUTOSTART_DIR/ask-ai.desktop"
 [Desktop Entry]

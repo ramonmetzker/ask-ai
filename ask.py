@@ -5,6 +5,7 @@ import json
 import subprocess
 import threading
 import socket
+import shutil
 import gi
 
 gi.require_version('Gtk', '3.0')
@@ -25,10 +26,21 @@ except Exception:
         HAS_INDICATOR = False
 
 # Path Configuration
-BASE_DIR = "/home/ramon/ai/llm"
-LLAMA_DIR = os.path.join(BASE_DIR, "llama.cpp")
-MODELS_DIR = os.path.join(LLAMA_DIR, "models")
-BINARY = os.path.join(LLAMA_DIR, "build/bin/llama-completion")
+MODELS_DIR = os.path.expanduser("~/.llm-models")
+
+# Search for the compiled binary globally, then fall back to relocated ~/ai/llama.cpp
+BINARY = shutil.which("llama-completion")
+if not BINARY:
+    FALLBACK_BINARY = os.path.expanduser("~/ai/llama.cpp/build/bin/llama-completion")
+    if os.path.exists(FALLBACK_BINARY):
+        BINARY = FALLBACK_BINARY
+    else:
+        # Backward compatibility for local project folder checks
+        LOCAL_BINARY = os.path.expanduser("~/ai/llm/llama.cpp/build/bin/llama-completion")
+        if os.path.exists(LOCAL_BINARY):
+            BINARY = LOCAL_BINARY
+        else:
+            BINARY = "llama-completion"
 
 MODELS = {
     "qwen": os.path.join(MODELS_DIR, "Qwen2.5-1.5B-Instruct-Q4_K_M.gguf"),

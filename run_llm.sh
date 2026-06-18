@@ -5,19 +5,21 @@
 # Exit immediately if a command exits with a non-zero status
 set -e
 
-# Base directory
-BASE_DIR="/home/ramon/ai/llm"
-LLAMA_DIR="$BASE_DIR/llama.cpp"
-MODELS_DIR="$LLAMA_DIR/models"
+# Models directory
+MODELS_DIR="$HOME/.llm-models"
 
 # Models
 QWEN_MODEL="$MODELS_DIR/Qwen2.5-1.5B-Instruct-Q4_K_M.gguf"
 LLAMA_MODEL="$MODELS_DIR/Llama-3.2-3B-Instruct-Q4_K_M.gguf"
 LLAMA_XS_MODEL="$MODELS_DIR/Llama-3.2-3B-Instruct-Q2_K.gguf"
 
-# Verify binaries exist
-if [ ! -f "$LLAMA_DIR/build/bin/llama-completion" ]; then
-    echo "Error: llama-completion binary not found at $LLAMA_DIR/build/bin/llama-completion"
+# Locate llama-completion binary
+if command -v llama-completion >/dev/null 2>&1; then
+    BINARY="llama-completion"
+elif [ -f "$HOME/ai/llama.cpp/build/bin/llama-completion" ]; then
+    BINARY="$HOME/ai/llama.cpp/build/bin/llama-completion"
+else
+    echo "Error: llama-completion binary not found in PATH or at ~/ai/llama.cpp/build/bin/llama-completion"
     echo "Please build llama.cpp first."
     exit 1
 fi
@@ -127,7 +129,7 @@ $PROMPT<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 fi
 
 # Run the model, silence stderr, strip end-of-text marker
-"$LLAMA_DIR/build/bin/llama-completion" \
+"$BINARY" \
     -m "$SELECTED_MODEL" \
     -ngl 99 \
     -no-cnv \
