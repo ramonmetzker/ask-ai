@@ -31,23 +31,27 @@ To enable the top bar tray icon in GNOME, install the system's AppIndicator repo
 sudo apt install gir1.2-ayatanaappindicator3-0.1
 ```
 
-### Models & LLM Engine
-1. **llama.cpp**: Needs to be compiled with the `llama-completion` binary.
-2. **Model Files**: GGUF model files placed in your local directory (default models are Qwen 2.5 1.5B and Llama 3.2 3B).
-
-*Note: You can inspect and update paths to `llama.cpp` and model files directly inside [ask.py](ask.py).*
+### Models & LLM Engine Setup
+1. **Global Models Directory**: Model files are stored in `~/.llm-models/`.
+2. **Download Models**: Run the included download script to automatically fetch the default models (Qwen 2.5 1.5B and Llama 3.2 3B) from Hugging Face into `~/.llm-models/`:
+   ```bash
+   ./download_models.sh
+   ```
+3. **llama.cpp Compilation**: Ensure `llama.cpp` is built (e.g. in `~/ai/llama.cpp`) with the `llama-completion` binary target.
+4. **Global PATH Resolution**: The installer automatically creates a wrapper script at `~/.local/bin/llama-completion` targeting `~/ai/llama.cpp/build/bin/llama-completion` and configuring the `LD_LIBRARY_PATH` environment variable so dynamic library dependencies resolve correctly.
 
 ---
 
 ## 🚀 Installation & Setup
 
-1. **Deploy executable & shortcuts**:
+1. **Deploy executable, wrappers, & shortcuts**:
    Run the installer script:
    ```bash
    ./install.sh
    ```
    This script will:
-   - Copy the utility to `~/.local/bin/ask` (making it globally accessible in your terminal).
+   - Copy the utility to `~/.local/bin/ask` (making it globally accessible in your terminal using the system python environment).
+   - Create a wrapper for `llama-completion` in `~/.local/bin/llama-completion` targeting your build directory.
    - Create a desktop entry at `~/.local/share/applications/ask-ai.desktop` so you can search for "Ask AI" in your GNOME applications grid.
    - Register the autostart launcher at `~/.config/autostart/ask-ai.desktop` to boot the tray daemon on login.
 
@@ -89,7 +93,8 @@ ask --gui
 
 ## 📂 Project Structure
 
-- `ask.py` - Core logic containing model routing, config readers, CLI, and the PyGObject GUI loop.
-- `install.sh` - Installs the desktop configurations and system binaries.
+- `ask.py` - Core logic containing model routing, config readers, CLI, and PyGObject GUI loop configured to always execute with system Python.
+- `install.sh` - Installs the desktop configurations, system binaries, and sets up the dynamic library wrapper.
+- `download_models.sh` - Helper script to download required `.gguf` models into the global `~/.llm-models/` directory.
 - `run_llm.sh` - Simple terminal-only bash script wrapper.
-- `.gitignore` - Excludes model binaries, cmake environments, and configuration states from tracking.
+- `.gitignore` - Excludes local config, python virtual environments (`myenv/`), and logs from tracking.
